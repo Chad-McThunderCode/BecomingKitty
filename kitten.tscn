@@ -1,7 +1,50 @@
-[gd_scene load_steps=32 format=3 uid="uid://bbq3nlxfivkdc"]
+[gd_scene load_steps=45 format=3 uid="uid://bbq3nlxfivkdc"]
 
 [ext_resource type="Texture2D" uid="uid://b5leio6xi4spq" path="res://sprites/kitty.png" id="1_w5i4k"]
 [ext_resource type="Script" path="res://kitty_animation.gd" id="2_pjl4c"]
+[ext_resource type="Script" path="res://state_logic/StateMachine.gd" id="3_xbi2p"]
+[ext_resource type="Script" path="res://state_logic/IdleState.gd" id="4_v78x8"]
+[ext_resource type="Script" path="res://state_logic/HibernateState.gd" id="5_eoqxy"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3dfcx"]
+atlas = ExtResource("1_w5i4k")
+region = Rect2(672, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xlrby"]
+atlas = ExtResource("1_w5i4k")
+region = Rect2(696, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rqnyo"]
+atlas = ExtResource("1_w5i4k")
+region = Rect2(720, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qdxyp"]
+atlas = ExtResource("1_w5i4k")
+region = Rect2(744, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kg1iy"]
+atlas = ExtResource("1_w5i4k")
+region = Rect2(768, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nw8n5"]
+atlas = ExtResource("1_w5i4k")
+region = Rect2(792, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pjrco"]
+atlas = ExtResource("1_w5i4k")
+region = Rect2(816, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sni6f"]
+atlas = ExtResource("1_w5i4k")
+region = Rect2(840, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hp5da"]
+atlas = ExtResource("1_w5i4k")
+region = Rect2(864, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_iaxey"]
+atlas = ExtResource("1_w5i4k")
+region = Rect2(888, 0, 24, 24)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7o3yk"]
 atlas = ExtResource("1_w5i4k")
@@ -119,6 +162,46 @@ region = Rect2(648, 0, 24, 24)
 animations = [{
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_3dfcx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xlrby")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rqnyo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qdxyp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kg1iy")
+}],
+"loop": true,
+"name": &"idle1",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nw8n5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pjrco")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sni6f")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hp5da")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_iaxey")
+}],
+"loop": false,
+"name": &"idle_to_lying_idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_7o3yk")
 }, {
 "duration": 1.0,
@@ -221,10 +304,27 @@ animations = [{
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_6fitf")
-animation = &"lying_idle_to_sleep"
+animation = &"idle1"
 autoplay = "lying_idle1"
 script = ExtResource("2_pjl4c")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 
-[connection signal="animation_looped" from="AnimatedSprite2D" to="AnimatedSprite2D" method="_on_animation_looped"]
+[node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("state")]
+script = ExtResource("3_xbi2p")
+state = NodePath("IdleState")
+
+[node name="IdleState" type="Node" parent="StateMachine" node_paths=PackedStringArray("actor", "animator")]
+script = ExtResource("4_v78x8")
+hibernateTimeout = 15.0
+actor = NodePath("../..")
+animator = NodePath("../../AnimatedSprite2D")
+
+[node name="HibernateState" type="Node" parent="StateMachine" node_paths=PackedStringArray("actor", "animator")]
+script = ExtResource("5_eoqxy")
+actor = NodePath("../..")
+animator = NodePath("../../AnimatedSprite2D")
+
+[connection signal="animation_finished" from="AnimatedSprite2D" to="StateMachine/IdleState" method="_on_animation_finished"]
+[connection signal="animation_looped" from="AnimatedSprite2D" to="StateMachine/IdleState" method="_on_animation_looped"]
+[connection signal="animation_looped" from="AnimatedSprite2D" to="StateMachine/HibernateState" method="_on_animation_looped"]
