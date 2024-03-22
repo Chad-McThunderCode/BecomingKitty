@@ -3,7 +3,6 @@ extends State
 
 func _physics_process(delta):
 	if(Input.is_anything_pressed()):
-		print("wake up")
 		state_machine.changeState(state_machine.idle_state)
 
 func _state_entered():

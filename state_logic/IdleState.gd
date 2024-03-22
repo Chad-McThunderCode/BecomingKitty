@@ -23,10 +23,12 @@ func pickAnimation():
 
 func _physics_process(delta):
 	idling+=delta
+	if(Input.is_anything_pressed()):
+		state_machine.changeState(state_machine.walking_state)
 
 func _state_entered():
 	super._state_entered()
-	pickAnimation()
+	animator.play("idle1", 1.0, false)
 	idling = 0
 
 func _on_animation_looped():
