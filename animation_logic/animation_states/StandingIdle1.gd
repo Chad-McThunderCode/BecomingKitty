@@ -1,0 +1,3 @@
+extends AnimationState
+
+class_name StandingIdle1
