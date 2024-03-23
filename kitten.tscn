@@ -1,4 +1,4 @@
-[gd_scene load_steps=57 format=3 uid="uid://bbq3nlxfivkdc"]
+[gd_scene load_steps=54 format=3 uid="uid://bbq3nlxfivkdc"]
 
 [ext_resource type="Texture2D" uid="uid://b5leio6xi4spq" path="res://sprites/kitty.png" id="1_w5i4k"]
 [ext_resource type="Script" path="res://kitty_animation.gd" id="2_pjl4c"]
@@ -6,8 +6,6 @@
 [ext_resource type="Script" path="res://state_logic/IdleState.gd" id="4_v78x8"]
 [ext_resource type="Script" path="res://state_logic/HibernateState.gd" id="5_eoqxy"]
 [ext_resource type="Script" path="res://state_logic/WalkingState.gd" id="6_418n6"]
-[ext_resource type="Texture2D" uid="uid://3mhkmgtumofp" path="res://sprites/lamp.png" id="7_d0sm1"]
-[ext_resource type="Texture2D" uid="uid://b7nithbr8utfg" path="res://sprites/sofa.png" id="8_qqfjj"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3dfcx"]
 atlas = ExtResource("1_w5i4k")
@@ -357,22 +355,11 @@ animations = [{
 "speed": 8.0
 }]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_mt6eu"]
-atlas = ExtResource("7_d0sm1")
-region = Rect2(16, 0, 16, 64)
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_o1vts"]
+radius = 4.0
+height = 18.0
 
-[sub_resource type="SpriteFrames" id="SpriteFrames_pp6te"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_mt6eu")
-}],
-"loop": true,
-"name": &"default",
-"speed": 5.0
-}]
-
-[node name="Kitten" type="Node2D"]
+[node name="Kitten" type="CharacterBody2D"]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_6fitf")
@@ -388,7 +375,7 @@ state = NodePath("IdleState")
 
 [node name="IdleState" type="Node" parent="StateMachine" node_paths=PackedStringArray("actor", "animator")]
 script = ExtResource("4_v78x8")
-hibernateTimeout = 3.0
+hibernateTimeout = 15.0
 actor = NodePath("../..")
 animator = NodePath("../../AnimatedSprite2D")
 
@@ -402,15 +389,10 @@ script = ExtResource("6_418n6")
 actor = NodePath("../..")
 animator = NodePath("../../AnimatedSprite2D")
 
-[node name="Sprite2D" type="AnimatedSprite2D" parent="."]
-z_index = -1
-position = Vector2(-21, -19)
-sprite_frames = SubResource("SpriteFrames_pp6te")
-
-[node name="Sprite2D2" type="Sprite2D" parent="."]
-z_index = -1
-position = Vector2(20, -22)
-texture = ExtResource("8_qqfjj")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 2)
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_o1vts")
 
 [connection signal="animation_finished" from="AnimatedSprite2D" to="StateMachine/IdleState" method="_on_animation_finished"]
 [connection signal="animation_looped" from="AnimatedSprite2D" to="StateMachine/IdleState" method="_on_animation_looped"]
