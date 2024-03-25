@@ -13,8 +13,6 @@ func pickAnimation():
 			animator.play("lying_idle2", 1.0, false)
 		else:
 			animator.play("lying_idle1", 1.0, false)
-		if(randf() < 0.1):
-			animator.play("idle1", 1.0, false)
 	elif(randf() < 0.3):
 		animator.play("idle_to_lying_idle", 1.0, false)
 	if(idling > hibernateTimeout):
